@@ -3,6 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:5000/api';
 // Nanti ganti ke production: https://task-manager-api-production-be.up.railway.app/api
 
+// buat instance/baseURL axios
 const api = axios.create({
   baseURL: API_URL,
   headers: {
