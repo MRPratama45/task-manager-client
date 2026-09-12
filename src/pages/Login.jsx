@@ -25,7 +25,7 @@ function Login () {
   // hook navigasi
   const navigate = useNavigate();
 
-  // fungsi login
+  // fungsi login dari AuthContext
   const {login} = useAuth();
 
   // handle perubahan input
@@ -89,7 +89,7 @@ function Login () {
       // 2a. terima data dari response login
       const userData = response.data.data;
       
-      // 2b. data di kirim ke authContext
+      // 2b. data di kirim ke authContext. memakai fungsi login dari AuthContext
       login(userData, userData.token); 
 
       // 3. redirect ke dashboard

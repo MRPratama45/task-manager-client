@@ -250,17 +250,26 @@ pages/Login.jsx, pages/Register.jsx, dll
 5. Buat halaman Register (responsive + komentar)
 6. Connect ke API backend
 7. Simpan token di localStorage
-8. alur/gambaran besar alur berdasarkan langkah kerja
-    USER → LOGIN → BACKEND → RESPONSE → LOCALSTORAGE → DASHBOARD
-9. alur/ langkah kerja detail
-    main.jsx
-    │
-    ▼
-    App.jsx (routing)
-    │
-    ▼
-    pages/Login.jsx ← Komponen Login dirender
+8. flow ringkas
+    - login: User → Login.jsx → api.js → Backend → Login.jsx → AuthContext → Dashboard.jsx
+    - registrasi: User → Register.jsx → api.js → Backend → Register.jsx → Login.jsx
+    - Refresh: main.jsx → AuthContext (cek localStorage) → App.jsx → Dashboard.jsx
+    - logout: Dashboard.jsx → AuthContext (hapus localStorage) → Login.jsx
 
+9. langkah pengerjaan berdasarkan folder
+    1. src/services/        → Konfigurasi API
+    2. src/contexts/        → State global (Auth)
+    3. src/components/      → Komponen reusable
+    4. src/pages/           → Halaman (Login, Register, Dashboard)
+    5. src/App.jsx          → Routing
+    6. src/main.jsx         → Entry point
+    7. Test                 → Browser
+
+10. Aturan:
+    - Buat dulu yang dipakai banyak (services, contexts, components)
+    - Buat kemudian yang pakai banyak (pages)
+    - Terakhir routing & entry point
+    - Alasan: Agar saat buat halaman, semua dependency sudah siap.
 
 ====================== bagan pengerjaan ============================
 
