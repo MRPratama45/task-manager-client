@@ -1,7 +1,31 @@
+// import day 8 
 import Dashboard from './pages/Dashboard';
 
+// import day 9
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+
+
+// function day 8
 function App() {
-  return <Dashboard />;
+  return (
+    <BrowserRouter> {/** wrapper utama routing */} 
+      <Routes> {/** tempat daftar route */}
+        {/* route default */}
+        <Route path="/" element={<Navigate to="/login" replace />}/> {/** satu spesifik route, navigate untuk redirect ke halaman lain, path="/login" untuk URL path, elemnt={<Login />} untuk component yg di tampilkan, replace untuk menghilangkan history di browser pada halaman sebelumnya */}
+
+        {/* route Login */}
+        <Route path="/login" element={<Login />}/> {/* formatnya: sebelum element adalah URL path(browser), setelah element adalah component yg di tampilkan*/} 
+
+        {/* route register */}
+        <Route path="/register" element={<Register />}/>
+
+        {/* route dashboard */}
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App;

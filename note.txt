@@ -1,0 +1,290 @@
+--- DAY 8 ---
+1. paham konsep dasar react
+    a. component = balok lego (setiap bagian UI), agar dapat di pakai berulang
+    b. app = susunan lego lengkap
+    c. state = kondisi balok (watna, ukuran), agar data dapat berubah didalam component
+    d. props = data yg dikirim antar balok, agar data dapat di kirim ke child dari parent
+    e. menggunakan JSX untuk HTML di dalam JS
+    f. hooks = fufngsi khusus react sesuai kebutuhan (useState, useEffect, dll)
+
+2. setup react dengan vite
+    a. vite = build tool modern untuk react yg jauh lebih cepat dari create react app
+    b. langkah setup
+        - buat struktur folder (npm create vite@latest "nama_folder" -- --template react). --template react untuk menggunakan template react
+        - masuk folder yg sudah dibuat
+        - install depedencies (npm install)
+        - tes react (npm run dev)
+        - cek di packaege.json
+
+3. install tailwind css (ini untuk installasi ver 4)
+    - tailwind css = framework css utility-first untuk styling cepat
+    - install packaege tailwind dan vite difolder yg dibuat npm install -D tailwindcss @tailwindcss/vite
+    - update file viteconfig.js (tambah import tailwindcss dan masukan ke array plugins)
+    - update drc/index.css (hapus semua dan ganti dengan @import "tailwindcss";)
+    - test tailwind (buat function di src/App.jsx dengan code bebas)
+    - cek di packaege.json
+
+4. install react Router
+    - install react router (npm install react-router-dom)
+    - cek di packaege.json
+
+5. install axios
+    - axios = library untuk HTTP request ke API backend
+    - npm install axios
+    - cek di packaege.json
+
+6. buat struktur folder
+    - src/
+        ├── assets/              # Gambar, icon
+        ├── components/          # Komponen reusable
+        │   ├── Button.jsx
+        │   ├── Input.jsx
+        │   └── Navbar.jsx
+        ├── pages/               # Halaman
+        │   ├── Login.jsx
+        │   ├── Register.jsx
+        │   ├── Dashboard.jsx
+        │   └── NotFound.jsx
+        ├── services/            # API service
+        │   └── api.js
+        ├── contexts/            # React Context (nanti)
+        │   └── AuthContext.jsx
+        ├── hooks/               # Custom hooks (nanti)
+        ├── utils/               # Helper functions
+        ├── App.jsx              # Main app
+        ├── main.jsx             # Entry point
+        └── index.css            # Global CSS
+    - cara buat folder mkdir "nama_folder"
+
+7. buat komponen pertama
+    - buat file src/services/api.js (untuk konfigurasi API)
+    - buat file src/components/Button.jsx (untuk komponen button reusable)
+    - buat file src/pages/Dashboard.jsx (untuk halaman sederhana tes)
+    - update src/App.js (impoer component dashboard dan di return panggil component yg dibuat)
+    - tes di browser (npm run dev)
+
+8. commit dan push
+    - masuk di folder yg dibuat 
+    - git init 
+    - git add .
+    - git commit -m "pesan yg dimasukan"
+    - buat repo di github
+    - git branch -M main
+    - git remote add origin "link_repo_github"
+    - git push -u origin main 
+    - disarankan memiliki min 3 branch untuk main (prod), develop (staging), feature/xxx (untuk udpate fitur)
+
+9. penjelasan dasar direktori folder
+  src/
+  ├── assets/         # Gambar, icon, font
+  ├── components/     # Komponen reusable (Button, Input, dll)
+  ├── contexts/       # React Context (AuthContext, dll)
+  ├── hooks/          # Custom hooks (useAuth, dll)
+  ├── pages/          # Halaman (Login, Register, Dashboard)
+  ├── services/       # API service (api.js)
+  └── utils/          # Helper functions
+
+10. hubungan antar file
+  main.jsx  (entry point, dari Vite)
+      │
+      ▼
+  App.jsx  (root component)
+      │
+      ├── Import Dashboard
+      │
+      ▼
+  pages/Dashboard.jsx  (halaman)
+      │
+      ├── Import Button
+      │
+      ▼
+  components/Button.jsx  (komponen reusable)
+
+  ═══════════════════════════════════════════
+
+services/api.js  (Konfigurasi Axios)
+    │
+    │ dipakai nanti di:
+    ▼
+pages/Login.jsx, pages/Register.jsx, dll
+
+11. alur
+  main.jsx render App
+  App render Dashboard
+  Dashboard pakai Button
+  Button punya style Tailwind
+
+12. file untuk api
+  services/api.js  (konfigurasi axios)
+    │
+    └── Dipakai di halaman (Login, Dashboard, dll)
+        untuk request ke backend
+
+13. bagan pengerjaan
+┌─────────────────────────────────────────────────────────────────┐
+│                    DAY 8: SETUP FRONTEND                        │
+│                    React + Vite + Tailwind                      │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 1: BELAJAR KONSEP REACT (30 menit)                        │
+│                                                                 │
+│  📖 Baca materi:                                                │
+│  ├── Apa itu React?                                             │
+│  ├── Component, Props, State, JSX                               │
+│  └── Perbedaan Backend vs Frontend                              │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 2: SETUP REACT + VITE (30 menit)                          │
+│                                                                 │
+│  💻 Terminal:                                                   │
+│  1. cd ke folder portfolio-projects                             │
+│  2. npm create vite@latest task-manager-client                  │
+│  3. Pilih: React → JavaScript → ESLint                          │
+│  4. cd task-manager-client                                      │
+│  5. npm install                                                 │
+│  6. npm run dev                                                 │
+│                                                                 │
+│  ✅ Cek: http://localhost:5173 (React default muncul)           │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 3: INSTALL TAILWIND CSS V4 (30 menit)                     │
+│                                                                 │
+│  💻 Terminal:                                                   │
+│  1. npm install -D tailwindcss @tailwindcss/vite                │
+│                                                                 │
+│  📝 Edit file:                                                  │
+│  2. vite.config.js → tambah tailwindcss()                       │
+│  3. src/index.css → @import "tailwindcss";                      │
+│  4. src/App.jsx → test dengan bg-blue-500                       │
+│                                                                 │
+│  ✅ Cek: Halaman biru dengan tulisan putih                      │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 4: INSTALL ROUTER & AXIOS (15 menit)                      │
+│                                                                 │
+│  💻 Terminal:                                                   │
+│  1. npm install react-router-dom                                │
+│  2. npm install axios                                           │
+│                                                                 │
+│  ✅ Cek: package.json ada axios & react-router-dom              │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 5: BUAT FOLDER STRUCTURE (15 menit)                       │
+│                                                                 │
+│  💻 Terminal:                                                   │
+│  mkdir src\components                                           │
+│  mkdir src\pages                                                │
+│  mkdir src\services                                             │
+│  mkdir src\contexts                                             │
+│  mkdir src\hooks                                                │
+│  mkdir src\utils                                                │
+│  mkdir src\assets                                               │
+│                                                                 │
+│  ✅ Cek: 7 folder muncul di src/                                │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 6: BUAT FILE KOMPONEN (45 menit)                          │
+│                                                                 │
+│  📝 Buat file:                                                  │
+│  1. src/services/api.js       → konfigurasi Axios               │
+│  2. src/components/Button.jsx → komponen tombol reusable        │
+│  3. src/pages/Dashboard.jsx   → halaman dashboard               │
+│  4. src/App.jsx               → update render Dashboard         │
+│                                                                 │
+│  ✅ Cek: Halaman Dashboard muncul di browser                    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 7: TEST & COMMIT (15 menit)                               │
+│                                                                 │
+│  💻 Terminal:                                                   │
+│  1. npm run dev                                                 │
+│  2. Buka browser http://localhost:5173                          │
+│  3. Cek tampilan Dashboard                                      │
+│  4. F12 → Console → pastikan tidak ada error                    │
+│                                                                 │
+│  💾 Git:                                                        │
+│  5. git init                                                    │
+│  6. git add .                                                   │
+│  7. git commit -m "feat: setup react + tailwind"                │
+│  8. git branch -M main                                          │
+│  9. git remote add origin https://github.com/...                │
+│  10. git push -u origin main                                    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │  SELESAI! 🎉    │
+                    │  Day 8 Done     │
+                    └─────────────────┘
+
+
+--- DAY 9 ---
+1. Buat branch feature/login-register
+    - git checkout -b feature/login-register
+    - git pull -u feature/login-register
+    - apa perbedaan git push dan pull. dan kenapa tiap buat branch harus melakukan git push -u origin "nama_branch"?
+
+2. buat struktur folder halaman
+    - tambahkan file di folder pages dengan nama Login.jsx, Register.jsx (kenapa nama file di folder pages berawal kapital?)
+    - tambahkan file di folder components dengan nama Input.jsx (kenapa nama file di folder pages berawal kapital?)
+    - tambahkan file di folder contexts dengan nama AuthContext.jsx (kenapa nama file di folder pages berawal kapital?)
+
+3. Setup React Router
+    - update App.js
+
+4. Buat halaman Login (responsive + komentar)
+5. Buat halaman Register (responsive + komentar)
+6. Connect ke API backend
+7. Simpan token di localStorage
+8. alur/gambaran besar alur berdasarkan langkah kerja
+    USER → LOGIN → BACKEND → RESPONSE → LOCALSTORAGE → DASHBOARD
+9. alur/ langkah kerja detail
+    main.jsx
+    │
+    ▼
+    App.jsx (routing)
+    │
+    ▼
+    pages/Login.jsx ← Komponen Login dirender
+
+
+====================== bagan pengerjaan ============================
+
+Day 8 (Selesai)
+    │
+    │ Setup React + Tailwind + Folder
+    ▼
+Day 9 (Besok)
+    │
+    ├── Setup React Router
+    ├── Buat halaman Login
+    ├── Buat halaman Register
+    ├── Connect ke API backend
+    └── Test login/register
+    │
+    ▼
+Day 10
+    │
+    ├── Dashboard layout
+    └── Protected routes
+    │
+    ▼
+Day 11-14
+    │
+    ├── Task CRUD UI
+    ├── Polish
+    └── Deploy
