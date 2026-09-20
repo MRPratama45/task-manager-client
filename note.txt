@@ -271,6 +271,185 @@ pages/Login.jsx, pages/Register.jsx, dll
     - Terakhir routing & entry point
     - Alasan: Agar saat buat halaman, semua dependency sudah siap.
 
+
+
+--- DAY 10 ---
+1. relasi cara pembuatan
+    ThemeContext → ProtectedRoute → GuestRoute → Navbar → Dashboard → App → main
+
+2. src/contexts/ThemeContext.jsx
+    2a. Import
+    createContext, useContext, useState, useEffect dari 'react'
+    
+    2b. Buat Context
+    const ThemeContext = createContext()
+
+    3c. Buat Provider (ThemeProvider)
+    State theme dengan lazy initializer → ambil dari localStorage.getItem('theme') || 'light'
+    useEffect:
+    Simpan theme ke localStorage
+    Jika theme === 'dark' → document.documentElement.classList.add('dark')
+    Else → document.documentElement.classList.remove('dark')
+    Fungsi toggleTheme → setTheme(theme === 'light' ? 'dark' : 'light')
+    value = { theme, toggleTheme }
+    Return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+
+    4d. Custom Hook (useTheme)
+    const context = useContext(ThemeContext)
+    Cek jika !context → throw Error
+    Return context
+
+3. src/index.css
+    3a. Import Tailwind
+    @import "tailwindcss";
+
+    3b. Custom Variant untuk Dark Mode
+    @custom-variant dark (&:where(.dark, .dark *));
+
+4. src/components/ProtectedRoute.jsx
+    4a. Import
+    Navigate dari 'react-router-dom'
+    useAuth dari '../contexts/AuthContext'
+
+    4b. Fungsi ProtectedRoute
+    Ambil user, loading dari useAuth()
+    Jika loading → tampilkan loading spinner
+    Jika !user → <Navigate to="/login" replace />
+    Return children
+
+5. src/components/GuestRoute.jsx
+    5a. Import
+    Navigate dari 'react-router-dom'
+    useAuth dari '../contexts/AuthContext'
+
+    5b. Fungsi GuestRoute
+    Ambil user, loading dari useAuth()
+    Jika loading → tampilkan loading spinner
+    Jika user → <Navigate to="/dashboard" replace />
+    Return children
+
+6. src/components/Navbar.jsx
+    6a. Import
+    useNavigate dari 'react-router-dom'
+    useAuth dari '../contexts/AuthContext'
+    useTheme dari '../contexts/ThemeContext'
+    Button dari './Button'
+
+    6b. Fungsi Navbar
+    const { user, logout } = useAuth()
+    const { theme, toggleTheme } = useTheme()
+    const navigate = useNavigate()
+    handleLogout → logout() + navigate('/login')
+
+    6c. Render
+    Navbar dengan class bg-white dark:bg-gray-800
+    Logo "Task Manager"
+    Nama user ({user?.name}) dengan hidden sm:block
+    Tombol toggle theme (🌙/☀️)
+    Tombol Logout
+
+7. src/pages/Dashboard.jsx
+    7a. Import
+    useAuth dari '../contexts/AuthContext'
+    Navbar dari '../components/Navbar'
+    Button dari '../components/Button'
+
+    7b. Fungsi Dashboard
+    const { user } = useAuth()
+
+    7c. Render
+    Container dengan bg-gray-100 dark:bg-gray-900
+    <Navbar />
+    Welcome Card (nama user)
+    Stats Cards (Total, Pending, Completed) — grid responsive
+    Task List Placeholder
+
+8. src/App.jsx
+    8a. Import
+    BrowserRouter, Routes, Route, Navigate dari 'react-router-dom'
+    Login, Register, Dashboard dari pages
+    ProtectedRoute dari './components/ProtectedRoute'
+    GuestRoute dari './components/GuestRoute'
+
+    8b. Routes
+    / → <Navigate to="/login" replace />
+    /login → <GuestRoute><Login /></GuestRoute>
+    /register → <GuestRoute><Register /></GuestRoute>
+    /dashboard → <ProtectedRoute><Dashboard /></ProtectedRoute>
+
+9. src/main.jsx
+    9a. Import
+    StrictMode, createRoot
+    AuthProvider dari './contexts/AuthContext'
+    ThemeProvider dari './contexts/ThemeContext'
+    App dari './App.jsx'
+    index.css
+
+    9b. render 
+    <StrictMode>
+    <AuthProvider>
+        <ThemeProvider>
+        <App />
+        </ThemeProvider>
+    </AuthProvider>
+    </StrictMode>
+
+10. flow akhir
+    USER buka aplikasi
+            │
+            ▼
+    main.jsx (render <AuthProvider><ThemeProvider><App />)
+            │
+            ▼
+    App.jsx (routing)
+            │
+            ├── /login    → GuestRoute → Login.jsx
+            ├── /register → GuestRoute → Register.jsx
+            └── /dashboard → ProtectedRoute → Dashboard.jsx
+                                                │
+                                                ├── Navbar.jsx
+                                                │      ├── useAuth
+                                                │      └── useTheme
+                                                │
+                                                └── useAuth
+
+
+--- Day 11 ---
+1. Paham konsep fetch data dari API
+    a. Komponen mount (pertama kali render)
+            │
+            ▼
+    b. useEffect jalan
+            │
+            ▼
+    c. Panggil API (GET /api/tasks)
+            │
+            ▼
+    d. Backend kirim data
+            │
+            ▼
+    e. Simpan data ke state
+            │
+            ▼
+    f. Komponen render ulang dengan data
+
+
+2. Buat custom hook useTasks
+3. Buat komponen TaskCard
+4. Buat komponen TaskModal (form tambah task)
+5. Update Dashboard.jsx untuk tampilkan task list
+6. Test create task
+7. Commit & push
+
+
+
+
+
+
+
+
+
+
 ====================== bagan pengerjaan ============================
 
 Day 8 (Selesai)
