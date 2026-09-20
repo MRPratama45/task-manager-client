@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ProtectedRoute from './components/ProtectRoute';
+import GuestRoute from './components/GuestRoute';
 
 
 // function day 8
@@ -16,13 +18,25 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />}/> {/** satu spesifik route, navigate untuk redirect ke halaman lain, path="/login" untuk URL path, elemnt={<Login />} untuk component yg di tampilkan, replace untuk menghilangkan history di browser pada halaman sebelumnya */}
 
         {/* route Login */}
-        <Route path="/login" element={<Login />}/> {/* formatnya: sebelum element adalah URL path(browser), setelah element adalah component yg di tampilkan*/} 
+        <Route path="/login" element={
+          <GuestRoute>
+            <Login />
+          </GuestRoute>
+        }/> {/* formatnya: sebelum element adalah URL path(browser), setelah element adalah component yg di tampilkan*/} 
 
         {/* route register */}
-        <Route path="/register" element={<Register />}/>
+        <Route path="/register" element={
+          <GuestRoute>
+            <Register />
+          </GuestRoute>
+        }/>
 
-        {/* route dashboard */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        {/* route dashboard with protedtec route */}
+        <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
       </Routes>
     </BrowserRouter>
   )
