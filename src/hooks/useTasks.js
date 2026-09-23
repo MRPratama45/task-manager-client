@@ -36,7 +36,47 @@ export function useTasks () {
     }
   }
 
-  // 5. fungsi: create taks
+  // 5. fungsi: update task
+  const updateTask = async (id, taskData) => {
+    try{
+      setError (null)
+
+      const response = await api.put(`/tasks/${id}`, taskData)
+
+      // 5a. update task di state
+      setTasks(tasks.map((task) => task.id === id? response.data.data : task ))
+
+      return {success: true, data: response.data.data}
+    }
+
+    catch (error){
+      const errorMessage = error.response?.data?.message || 'Gagal mengupdate task'
+      setError(errorMessage)
+      return {success: false, message: errorMessage}
+    }
+    
+  }
+
+  // 6. Fungsi: delete Task
+  const deleteTask = async (id) => {
+    try {
+      setError(null)
+      await api.delete(`/tasks/${id}`)
+
+      // 6a. Hapus task di state
+      setTasks(tasks.filter((task) => task.id !== id))
+
+      return {success: true}
+    }
+    catch (error) {
+      const errorMessage = error.response?.data?.message || 'Gagal menghapus task'
+      setError(errorMessage)
+      return {success: false, message: errorMessage}
+    }
+  }
+
+
+  // 7. fungsi: create taks
   const createTask = async (taskData) => {
     try{
       setError (null)
@@ -62,18 +102,20 @@ export function useTasks () {
     }
   }
 
-  // 6. fetch saat komponen mount
+  // 8. fetch saat komponen mount
   useEffect (() => {
     fetchTasks()
   }, [])
 
-  // 7. return 
+  // 9. return 
   return {
     tasks,      // data tasks
     loading,    // status laoding
     error,      // pesan error
     fetchTasks,   // fungsi refresh/get semua tasks
     createTask,   // fungsi create
+    updateTask,   // fungsi update
+    deleteTask    // fungsi delete
   }
 }
 

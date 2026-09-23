@@ -433,16 +433,335 @@ pages/Login.jsx, pages/Register.jsx, dll
             ▼
     f. Komponen render ulang dengan data
 
-
 2. Buat custom hook useTasks
 3. Buat komponen TaskCard
 4. Buat komponen TaskModal (form tambah task)
 5. Update Dashboard.jsx untuk tampilkan task list
 6. Test create task
-7. Commit & push
+7. src/hooks/useTasks.js
+    a. Import
+    useState, useEffect dari 'react'
+    api dari '../services/api'
+
+    b. State
+    tasks → array data task
+    loading → status loading
+    error → pesan error
+
+    c. Fungsi fetchTasks()
+    Set loading = true
+    api.get('/tasks') → ambil semua task
+    Simpan ke setTasks(response.data.data)
+    Catch error → setError
+    Finally → setLoading(false)
+
+    d. Fungsi createTask(taskData)
+    api.post('/tasks', taskData) → buat task baru
+    Tambahkan ke state setTasks([newTask, ...tasks])
+    Return { success: true, data }
+    Catch → return { success: false, message }
+
+    e. useEffect
+    Jalan sekali saat mount → panggil fetchTasks()
+
+    f. Return
+    { tasks, loading, error, fetchTasks, createTask }
+
+8. src/components/TaskCard.jsx
+    a. Import
+    Button dari './Button'
+
+    b. Props
+    task → data task
+    onEdit → fungsi dari parent
+    onDelete → fungsi dari parent
+
+    c. Objek Konfigurasi
+    statusColors → warna badge per status
+    statusLabels → label per status
+
+    d. Fungsi formatDate()
+    Format tanggal ke bahasa Indonesia
+
+    e. Render
+    Title + Status Badge
+    Description (jika ada)
+    Due Date (jika ada)
+    Tombol Edit & Hapus
+
+9. src/components/TaskModal.jsx
+    a. Import
+    useState, useEffect dari 'react'
+    Input, Button
+
+    b. Props
+    isOpen → apakah modal terbuka
+    onClose → fungsi tutup
+    onSubmit → fungsi submit
+    task → data task (untuk edit)
+
+    c. State
+    formData → data form (title, description, status, due_date)
+    errors → pesan error per field
+    loading → status loading
+
+    d. useEffect
+    Saat isOpen berubah → reset form
+    Jika task ada → isi form dengan data task (edit mode)
+    Jika tidak → kosongkan form (create mode)
+
+    e. Fungsi handleChange()
+    Update formData saat input berubah
+    Clear error field
+
+    f. Fungsi validate()
+    Cek title, description, due_date
+    Set error jika tidak valid
+    Return true/false
+
+    g. Fungsi handleSubmit()
+    validate() dulu
+    Panggil onSubmit(formData)
+    Jika sukses → onClose()
+    Jika gagal → tampilkan error
+
+    h. Render
+    Overlay (background gelap)
+    Modal content
+    Form dengan Input, textarea, select, date
+    Tombol Batal & Simpan
+
+10. src/components/Input.jsx
+    a. Props
+    label, type, name, value, onChange, placeholder, error, required
+
+    b. Render
+    Label (+ tanda * jika required)
+    Input field dengan class dark mode
+    Pesan error (jika ada)
+
+    c. Update Day 11
+    Tambah class dark:bg-gray-700 dark:text-white
+    Tambah class dark:border-gray-600
+
+11. src/pages/Dashboard.jsx
+    a. Import
+    useState dari 'react'
+    useAuth dari '../contexts/AuthContext'
+    useTasks dari '../hooks/useTasks'
+    Navbar, Button, TaskCard, TaskModal
+
+    b. State & Hooks
+    user → dari useAuth()
+    tasks, loading, error, fetchTasks, createTask → dari useTasks()
+    isModalOpen → state modal
+
+    c. Hitung Statistik
+    stats.total → jumlah total
+    stats.pending → filter status pending
+    stats.in_progress → filter status in_progress
+    stats.completed → filter status completed
+
+    d. Fungsi handleCreateTask()
+    Panggil createTask(taskData)
+    Return hasilnya
+
+    e. Fungsi handleEditTask()
+    Placeholder (untuk Day 12)
+
+    f. Fungsi handleDeleteTask()
+    Placeholder (untuk Day 12)
+
+    g. Render
+    Navbar
+    Welcome card
+    Stats cards (4 card)
+    Task list section:
+    Header + tombol "Tambah Task"
+    Loading state
+    Error state
+    Empty state
+    Task grid (map tasks → TaskCard)
+    TaskModal
+
+12. Flow Fetch tasks
+    Dashboard.jsx (useTasks)
+        │
+        │ useEffect → fetchTasks()
+        ▼
+    useTasks.js (fetchTasks)
+        │
+        │ api.get('/tasks')
+        ▼
+    services/api.js
+        │
+        │ GET /api/tasks
+        ▼
+    BACKEND
+        │
+        │ Response: { data: [...] }
+        ▼
+    useTasks.js (setTasks)
+        │
+        │ State tasks update
+        ▼
+    Dashboard.jsx (render ulang)
+        │
+        │ map tasks → TaskCard
+        ▼
+    TaskCard.jsx (tampilkan tiap task)
+
+13. flow create task
+    USER klik "+ Tambah Task"
+        │
+        ▼
+    Dashboard.jsx (setIsModalOpen(true))
+        │
+        ▼
+    TaskModal.jsx (muncul, form kosong)
+        │
+        │ User isi form
+        │ User klik "Simpan"
+        ▼
+    TaskModal.jsx (handleSubmit)
+        │
+        │ validate()
+        │ onSubmit(formData)
+        ▼
+    Dashboard.jsx (handleCreateTask)
+        │
+        │ return await createTask(taskData)
+        ▼
+    useTasks.js (createTask)
+        │
+        │ api.post('/tasks', taskData)
+        ▼
+    BACKEND
+        │
+        │ Response: { data: newTask }
+        ▼
+    useTasks.js (setTasks([newTask, ...tasks]))
+        │
+        │ Return { success: true }
+        ▼
+    Dashboard.jsx (terima hasil)
+        │
+        │ TaskModal terima hasil
+        ▼
+    TaskModal.jsx (onClose())
+        │
+        │ Modal tertutup
+        ▼
+    Dashboard.jsx (render ulang dengan task baru)
 
 
+14. relasi cara ppembuatan
+    useTasks → TaskCard → TaskModal → Dashboard → App
 
+    Penjelasan:  Urutan	File	Alasan
+    1	useTasks.js	Butuh hook untuk fetch/create data
+    2	TaskCard.jsx	Butuh komponen tampilan task
+    3	TaskModal.jsx	Butuh form tambah task
+    4	Dashboard.jsx	Gabungkan semua
+    5	App.jsx	(Tidak berubah)
+
+
+15. keterhubungan 
+    Dashboard.jsx
+        │
+        ├── useTasks() → useTasks.js
+        │
+        ├── TaskCard → TaskCard.jsx
+        │       └── Button → Button.jsx
+        │
+        └── TaskModal → TaskModal.jsx
+                ├── Input → Input.jsx
+                └── Button → Button.jsx
+
+
+16. FUNGSI SETIAP FILE
+    File	Fungsi Utama
+    useTasks.js	Custom hook: fetch & create task
+    TaskCard.jsx	Tampilkan 1 task
+    TaskModal.jsx	Form tambah/edit task
+    Input.jsx	Input reusable (dengan dark mode)
+    Dashboard.jsx	Halaman utama dengan task list
+    api.js	Konfigurasi Axios
+    AuthContext.jsx	State global user
+    ThemeContext.jsx	State global theme
+    Navbar.jsx	Header dengan user & toggle theme
+
+17. alur di day 11
+    USER buka aplikasi
+        │
+        ▼
+    main.jsx (render <AuthProvider><ThemeProvider><App />)
+        │
+        ▼
+    App.jsx (routing)
+        │
+        ▼
+    /dashboard → ProtectedRoute → Dashboard.jsx
+        │
+        ├── Navbar.jsx (user info + theme toggle)
+        │
+        ├── useTasks() → fetch tasks dari API
+        │
+        ├── Stats Cards (hitung dari tasks)
+        │
+        ├── Task List
+        │       │
+        │       └── TaskCard.jsx (untuk setiap task)
+        │
+        └── TaskModal.jsx (saat klik "+ Tambah Task")
+                │
+                ├── Input.jsx
+                └── Button.jsx
+
+
+--- Day 12 ---
+1. Agenda hari in
+    a. Paham konsep Edit & Delete
+        > alur edit 
+            1. User klik tombol Edit di TaskCard
+                    │
+                    ▼
+            2. Dashboard set state "editingTask"
+                    │
+                    ▼
+            3. Buka TaskModal dengan data task
+                    │
+                    ▼
+            4. User ubah data
+                    │
+                    ▼
+            5. Submit → PUT /api/tasks/:id
+                    │
+                    ▼
+            6. Update state → Task di list berubah
+
+        > alur delete
+            1. User klik tombol Hapus di TaskCard
+                    │
+                    ▼
+            2. Muncul ConfirmDialog "Yakin hapus?"
+                    │
+                    ▼
+            3. User klik "Hapus"
+                    │
+                    ▼
+            4. DELETE /api/tasks/:id
+                    │
+                    ▼
+            5. Hapus dari state → Task hilang dari list
+
+    b. Update useTasks.js (tambah updateTask & deleteTask)
+        - tambahkan 2 fungsi baru (edit dan delete)
+    c. Update TaskModal.jsx (support edit mode)
+    d. Buat ConfirmDialog.jsx (konfirmasi hapus)
+    e. Update Dashboard.jsx (handle edit & delete)
+    f. Test CRUD lengkap
+    g. Commit & push
 
 
 

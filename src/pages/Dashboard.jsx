@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import Button from '../components/Button';
 import TaskCard from '../components/TaskCard';
 import TaskModal from '../components/TaskModal';
+import ConfirmDialog from '../components/ConfirmDialog'
 // import {useTheme} from '../contexts/ThemeContext' // hanya untuk tes
 
 function Dashboard() {
@@ -15,10 +16,19 @@ function Dashboard() {
   const {user} = useAuth();
 
   // 2. task hooks
-  const {tasks, loading, error, fetchTasks, createTask} = useTasks();
+  const {tasks, loading, error, fetchTasks, createTask, updateTask, deleteTask} = useTasks();
 
   // 3. state modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // new. state edit task
+  const [editingTask, setEditingTask] = useState(null);
+
+  // new. state delete task
+  const [deletingTask, setDeletingTask] = useState(null);
+
+  // new.state loading delete
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // 4. hitung statistik
   const stats = {
@@ -28,20 +38,67 @@ function Dashboard() {
     completed: tasks.filter((task) => task.status === 'completed').length,
   }
 
-  // 5. handle create
-  const handleCreateTask = async (taskData) => {
-    return await createTask(taskData)
-  }
+  // 5. handle create (di ganti dengan handleSubmitTask)
+  // const handleCreateTask = async (taskData) => {
+  //   // return await createTask(taskData)
+  //   setEditingTask(null)
+  //   setIsModalOpen(true)
+  // }
 
   // 6. handle edit (onproses)
   const handleEditTask = (task) => {
-    console.log('Edit Task: ', task);
+    // console.log('Edit Task: ', task);
+    setEditingTask(task)
+    setIsModalOpen(true)
   }
 
   // 7. handle delete (onproses)
-  const handleDeleteTask = (task) => {
-    console.log('Delete Task: ', task);
+   const handleDeleteTask =(task) => {
+    console.log('delete task: ', task);
+    
+    setDeletingTask(task) // set task yg akan di hapus
   }
+
+  // new. handle submit modal(create/delete)
+  const handleSubmitTask = async (taskData) => {
+    if (editingTask) {
+      // edit mode
+      const result = await updateTask (editingTask.id, taskData)
+      if (result.success) {
+        setEditingTask(null)
+      }
+      return result
+    } else {
+      // create mode
+      return await createTask(taskData)
+    }
+  }
+
+  // new. konfirmasi delete
+  const handleConfirmDelete = async () => {
+    console.log('confirm delete: ', deletingTask);
+    
+    if (!deletingTask) return;
+
+    setIsDeleting (true)
+
+    const result = await deleteTask(deletingTask.id)
+    console.log('delete result: ', result);
+    
+    setIsDeleting(false)
+
+    if (result.success) {
+      setDeletingTask(null) //tutup dialog
+    }
+  }
+
+  // new. close modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setEditingTask(null) // reset edit mode
+  }
+
+
 
   // 8. render
   return (
@@ -169,11 +226,22 @@ function Dashboard() {
         </div>
       </main>
 
-      {/* Modal */}
+      {/* Modal Create/edit */}
       <TaskModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreateTask}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitTask}
+        task={editingTask}
+      />
+
+      {/* confirm dialog */}
+      <ConfirmDialog 
+        isOpen={!!deletingTask}
+        onClose={() => setDeletingTask(null)}
+        onConfirm={handleConfirmDelete}
+        title="Hapus Task"
+        message={`Apakah Anda yakin ingin menghapus task ini ? "(${deletingTask?.title})"`} 
+        loading={isDeleting}
       />
     </div>
   );
