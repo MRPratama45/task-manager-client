@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import {useAuth} from '../contexts/AuthContext';
 import {useTasks} from '../hooks/useTasks';
 import Navbar from '../components/Navbar'
@@ -6,6 +6,7 @@ import Button from '../components/Button';
 import TaskCard from '../components/TaskCard';
 import TaskModal from '../components/TaskModal';
 import ConfirmDialog from '../components/ConfirmDialog'
+import TaskFilters from '../components/TasksFilters'
 // import {useTheme} from '../contexts/ThemeContext' // hanya untuk tes
 
 function Dashboard() {
@@ -29,6 +30,48 @@ function Dashboard() {
 
   // new.state loading delete
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // new. state filter
+  const[filters, setFilters] = useState ({
+    search: '',
+    status: '',
+    sort: '',
+    order: '',
+  })
+
+  // new. fetch ulang saat filter berubah
+  useEffect(() => {
+    const apiFilters = {
+      status: filters.status,
+      sort: filters.sort,
+      order: filters.order,
+    }
+    fetchTasks(apiFilters)
+  }, [filters.status, filters.sort, filters.order])
+
+  // new. filter client side (untuk search)
+  const filteredTasks = useMemo (() => {
+    // jika tidak ada search smeua task tampilkan
+    if (!filters.search) return tasks 
+
+    // search per katadengan pemecah spasi
+    const searchWords = filters.search 
+    .toLowerCase()                // huruf kecil
+    .trim()                       // hapus spasi di awal dan akhir
+    .split(/\s+/)                 // pemecah spasi (termasuk multiple spasi)
+    .filter((word) => word)       // hapus string kosong
+
+    // filter task: judul harus mengandung semua kata
+    return tasks.filter((task) => {
+      const title = task.title.toLowerCase()
+      // setiap kata search harus ada di title
+      return searchWords.every((word) => title.includes(word))
+    } 
+
+      // search by huruf
+      // task.title.toLowerCase().includes(filters.search.toLowerCase())
+  )
+  }, [tasks, filters.search])
 
   // 4. hitung statistik
   const stats = {
@@ -97,8 +140,6 @@ function Dashboard() {
     setIsModalOpen(false)
     setEditingTask(null) // reset edit mode
   }
-
-
 
   // 8. render
   return (
@@ -179,6 +220,10 @@ function Dashboard() {
               + Tambah Task
             </Button>
           </div>
+
+          {/* filters */}
+          <TaskFilters filters={filters} onFilterChange={setFilters} />
+          
           {/* Loading */}
           {loading && (
             <div className="text-center py-12">
@@ -213,7 +258,7 @@ function Dashboard() {
           {/* Task Grid */}
           {!loading && !error && tasks.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {tasks.map((task) => (
+              {filteredTasks.map((task) => (
                 <TaskCard
                   key={task.id}
                   task={task}

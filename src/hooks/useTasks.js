@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../services/api";
-
-
 
 // Custom Hook untuk mengelola state & operasi untuk tasks
 export function useTasks () {
@@ -14,17 +12,29 @@ export function useTasks () {
   // 3. state untuk error
   const [error, setError] = useState(null);
 
-  // 4. fungsi: fetch all tasks
-  const fetchTasks = async () =>{
+  // 4. fungsi: fetch all tasks with filter
+  const fetchTasks = useCallback (async (filters= {}) => {
     try {
       setLoading (true)
       setError (null)
 
+      // new. build query string dari filter
+      const params = new URLSearchParams()
+      if (filters.status) params.append('status', filters.status)
+      if (filters.sort) params.append('sort', filters.sort)
+      if (filters.order) params.append('order', filters.order)
+      
+      const queryString = params.toString()
+      const url = queryString ? `/tasks?${queryString}` : '/tasks'
+
+      const response = await api.get(url)
+      setTasks(response.data.data)
+
       // 4a.get /api/tasks
-      const response = await api.get('tasks')
+      // const response = await api.get('tasks')
 
       // 4b.simpan tasks ke state
-      setTasks (response.data.data)
+      // setTasks (response.data.data)
     }
     catch (error) {
       const errorMessage = error.response?.data?.message || 'Gagal memuat tasks';
@@ -34,7 +44,7 @@ export function useTasks () {
     finally {
       setLoading (false)
     }
-  }
+  }, [])
 
   // 5. fungsi: update task
   const updateTask = async (id, taskData) => {
@@ -75,7 +85,6 @@ export function useTasks () {
     }
   }
 
-
   // 7. fungsi: create taks
   const createTask = async (taskData) => {
     try{
@@ -105,7 +114,7 @@ export function useTasks () {
   // 8. fetch saat komponen mount
   useEffect (() => {
     fetchTasks()
-  }, [])
+  }, [fetchTasks])
 
   // 9. return 
   return {

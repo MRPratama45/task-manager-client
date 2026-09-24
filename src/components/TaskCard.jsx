@@ -29,7 +29,7 @@ function TaskCard ({ task, onEdit, onDelete }) {  // task, onEdit, onDelete = pr
 
   // 4. render
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 animate-fadeIn">
       {/* Header: Title & Status */}
       <div className="flex justify-between items-start gap-2 mb-2">
         <h3 className="font-semibold text-gray-800 dark:text-white flex-1">

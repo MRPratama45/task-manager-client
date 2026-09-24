@@ -760,8 +760,98 @@ pages/Login.jsx, pages/Register.jsx, dll
     c. Update TaskModal.jsx (support edit mode)
     d. Buat ConfirmDialog.jsx (konfirmasi hapus)
     e. Update Dashboard.jsx (handle edit & delete)
-    f. Test CRUD lengkap
+    
+    f. struktur folder
+        src/
+        ├── components/   → Komponen kecil (LEGO)
+        ├── contexts/     → State global (data yang di-share)
+        ├── hooks/        → Fungsi reusable/fungsi yg dapat digunakan berulang (logika)
+        ├── pages/        → Halaman lengkap
+        ├── services/     → Komunikasi API
+        ├── assets/       → Gambar, icon
+        ├── utils/        → Helper functions
+        ├── App.jsx       → Routing
+        ├── main.jsx      → Entry point
+        └── index.css     → Global style 
+    
+2. alur pembuatan struktur folder
+    a. src/service => untuk komunikasi ke BE
+    b. src/context => untuk state global/berbagi data global(berbagi data kemana saja tanpa mengirim secara manual)/manajement state(menyimpan logika data yg sering  dipakai bersama)
+    c. src/components => untuk membuat komponne kecil yg bisa dipakai di banyak halaman
+    d. src/hooks => penampung logika aplikasi (tempat CRUD)/logikan reusable yg dipakai banyak komponen atau kompleks (banyak state dan fungsi)
+    e. src/pages => untuk menampilkan halaman url dengan spesifik/kumpulan component + tampilan khusus di halaman tertentu
+    f. src/App.jsx => untuk routing/penentu page yg akan ditampilkan
+    g. src/main.jsx => entry point 
+
+3. penjelasan lebih detail mengenai struktur folder 
+    a. src/services
+   └─ Komunikasi ke BE (Axios)
+      • baseURL
+      • Interceptor (auto-attach token)
+      • Export instance
+
+    b. src/contexts
+    └─ State global (dibagi tanpa kirim manual)
+        • AuthContext → user, login, logout
+        • ThemeContext → theme, toggleTheme
+        └─ Untuk data yang jarang berubah
+
+    c. src/components
+    └─ Komponen KECIL reusable
+        • Button, Input, Navbar, TaskCard
+        • Dipakai di banyak halaman
+        └─ Tidak punya route
+
+    d. src/hooks
+    └─ Logika REUSABLE yang kompleks
+        • useTasks → fetch/CRUD tasks
+        • Dipakai di banyak komponen
+        └─ Logika form sederhana tetap di komponen
+
+    e. src/pages
+    └─ Halaman UTUH dengan route spesifik
+        • Login, Register, Dashboard
+        • Gabungan komponen + logika halaman
+        └─ 1 URL = 1 file
+
+    f. src/App.jsx
+    └─ Routing (URL → halaman)
+        • Route /login → <Login />
+        • Route /dashboard → <Dashboard />
+        └─ Bungkus dengan ProtectedRoute/GuestRoute
+
+    g. src/main.jsx
+    └─ Entry point
+        • Render <App />
+        • Bungkus dengan Provider
+        └─ Import global CSS
+
+4. trace error
+    a. Error Logika
+   ├── hooks/       → logika data spesifik (tasks, dll)
+   └── contexts/    → logika data global (user, theme)
+
+    b. Error Tampilan
+    ├── pages/       → halaman utuh (Dashboard, Login)
+    └── components/  → komponen kecil (Button, TaskCard, TaskModal)
+
+    c. Error Service
+    └── services/    → komunikasi API (api.js)
+
+
+--- Day 13 ---
+1. Materi pembahasan
+    a. Tambah fitur search task
+    b. Tambah fitur filter by status
+    c. Tambah fitur sort task
+    d. Tambah animasi & transisi
+    e. Polish UI/UX
+    f. Test responsive
     g. Commit & push
+
+2. 
+
+
 
 
 
